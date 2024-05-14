@@ -13,9 +13,9 @@
             $('#prompt').text("");
             $('#output').val("");
 
-            $( "#prompt" ).on( "change", function() {
-                strok = $('#prompt').text();
-            } );
+            // $( "#prompt" ).on( "change", function() {
+            //     strok = $('#prompt').text();
+            // } );
 
             $('input[type=button]').click(function () {
                 // $('#output').val("hui!\nhui!");
@@ -23,29 +23,30 @@
                     errorEmpty();
                 }
                 else {
+                    strok = $('#prompt').text();
                     $.ajax({
                         method: 'post',
                         url: './synt',
                         dataType: 'json',
                         contentType: "application/json; charset=utf-8",
-                        data: JSON.stringify({text: String($('#prompt').text())}),
+                        data: JSON.stringify({text: String(strok)}),
                         success: function(data) {
                             console.log(data);
                             if (data.type == "Error") {
                                 strok = data.initial_cmd;
-                                $('#prompt').text("");
+                                //$('#prompt').text("");
                                 errorEmpty();
-                                //
-                                let temp = data.initial_cmd.split(" ");
 
+                                // loop across initial cmd
+                                let temp = strok.split(" ");
+                                $('#prompt').text("");
                                 for (var i = 0; i < temp.length; i++) {
-                                    if (i == data.index) {
-                                        $('#prompt').append("<font color='red'> " + temp[i] + " </font>");
-                                    } else {
-                                        $('#prompt').append(" " + temp[i]);
-                                    }
+                                    $('#prompt').append("<span id='token-" + i + "'>" + temp[i] + "</span>");
                                 }
-                                // $('#prompt').text(data.initial_cmd);
+                                
+                                let id = "#token-" + String(data.index);
+                                $(id).css({'color' : 'red'});
+                                
                                 $('#output').val(data.text);
                             } else {
                                 //

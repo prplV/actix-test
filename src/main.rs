@@ -26,7 +26,7 @@ async fn index() -> impl Responder {
 
 #[post("/synt")]
 async fn synt_analize(req_body: web::Json<RequestType>) -> Result<web::Json<ResponseType>> {
-    let req = req_body.text.to_owned().replace("\n", " ");
+    let req = req_body.text.to_owned().replace("\u{a0}", " ");
 
     // HttpResponse::Ok().body("valid cmd")
     // // req = req_body.replace("%0A", " ").replace("text=", "");
