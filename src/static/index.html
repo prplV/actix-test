@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Синтаксический анализатор</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $('document').ready( function () {
+            //alert("hi");
+            let strok = "";
+
+            $('#prompt').text("");
+            $('#output').val("");
+
+            $( "#prompt" ).on( "change", function() {
+                strok = $('#prompt').text();
+            } );
+
+            $('input[type=button]').click(function () {
+                // $('#output').val("hui!\nhui!");
+                if ($('#prompt').text() == "") {
+                    errorEmpty();
+                }
+                else {
+                    $.ajax({
+                        method: 'post',
+                        url: './synt',
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({text: String($('#prompt').text())}),
+                        success: function(data) {
+                            console.log(data);
+                            if (data.type == "Error") {
+                                strok = data.initial_cmd;
+                                $('#prompt').text("");
+                                errorEmpty();
+                                //
+                                let temp = data.initial_cmd.split(" ");
+
+                                for (var i = 0; i < temp.length; i++) {
+                                    if (i == data.index) {
+                                        $('#prompt').append("<font color='red'> " + temp[i] + " </font>");
+                                    } else {
+                                        $('#prompt').append(" " + temp[i]);
+                                    }
+                                }
+                                // $('#prompt').text(data.initial_cmd);
+                                $('#output').val(data.text);
+                            } else {
+                                //
+                                strok = data.initial_cmd;
+                                $('#prompt').text(data.initial_cmd);
+                                $('#output').val(data.text);
+                            }
+                        },
+                        error: function(err) {
+                            errorEmpty();
+                            console.log(err);
+                        }
+                    });
+                }
+            });
+            $('#prompt').on('click', function () {
+                $('#prompt').text(strok);
+                $('#panel').css({'border-color' : 'rgb(131, 131, 150)'});
+            });
+            function errorEmpty() {
+                $('#panel').css({'border-color' : 'rgb(255, 17, 17)'});
+            }
+        });
+    </script>
+    <style>
+        @font-face {
+            font-family: "Montserrat";
+            src:
+                url("./fonts/Montserrat/Montserrat-VariableFont_wght.ttf"),
+        }
+
+        body{
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            font-family: "Montserrat";
+            margin: 0;
+            background-color: #252533;
+            color: rgb(131, 131, 150);
+        }
+        .header {
+            position: relative;
+            height: 5vh;
+            text-align: center;
+            background-color: #1e1e29;
+        }
+        .header-text {
+            position: relative;
+            font-size: 32px;
+            color: rgb(166, 166, 190);
+        }
+        .main-cont {
+            position: relative;
+            display: flex;
+            height: 95vh;
+            width: 100%;
+        }
+        .user-panel {
+            position: relative;
+            display: block;
+            height: 90vh;
+            width: 50vw;
+        }
+        .rules-table {
+            position: relative;
+            display: block;
+            height: 90vh;
+            width: 50vw;
+        }
+        .universal-wrap {
+            position: relative;
+            display: block;
+            height: 70vh;
+            width: 40vw;
+            margin: auto;
+            margin-top: 5vh;
+
+            border: 1px solid rgb(131, 131, 150);
+            border-radius: 10px;
+        }
+        .rules-row {
+            position: relative;
+            margin-top: 0.1vh;
+            width: 40vw;
+            height: 3vh;
+            text-align: left;
+            font-size: 24px;
+
+            
+        }
+        .rules-header {
+            position: relative;
+            margin-top: 0.1vh;
+            width: 40vw;
+            height: 3vh;
+            text-align: center;
+            font-size: 32px;
+            padding-bottom: 3vh;
+            padding-top: 1vh;
+            color: rgb(166, 166, 190);
+        }
+        textarea {
+            background-color: #252533;
+            color: rgb(145, 145, 167);
+            font-size: 18px;
+            border-radius: 5px;
+            border-color: rgb(131, 131, 150);
+            border-width: 0.5px;
+            max-width: 35vw;
+            min-width: 35vw;
+            max-height: 20vh;
+            min-height: 3vh;
+            height: 3vh;
+            padding-left: 1vh;
+            padding-right: 1vh;
+            padding-top: 1vh;
+            padding-bottom: 1vh;
+            margin-top: 2vh;
+            margin-left: 4vh;
+            scrollbar-width: 2px;
+            scroll-behavior: smooth;
+            scrollbar-color: #191922 #252533;
+        }
+        .btn {
+            position: relative;
+            margin-top: 3vh;
+            padding-top: 1vh;
+            padding-left: 1vh;
+            padding-bottom: 1vh;
+            padding-right: 1vh;
+            width: 10vw;
+            font-size: 24px;
+            background-color: #1e1e29;
+            color: rgb(166, 166, 190);
+            border-width: 0;
+            border-radius: 5px;
+            transition: 0.2s;
+            cursor: pointer;
+            margin-left: 15vw;
+        }
+        .btn:hover {
+            background-color: #1c1c25;
+        }
+        [contentEditable=true]:empty:not(:focus):before {
+            content: attr(data-text)
+        }
+        .txtarea {
+            background-color: #252533;
+            color: rgb(145, 145, 167);
+            font-size: 18px;
+            border-radius: 5px;
+            border-width: 0.5px;
+            border-color: rgb(131, 131, 150);
+            border-style: solid;
+            max-width: 35vw;
+            min-width: 35vw;
+            max-height: 20vh;
+            min-height: 3vh;
+            height: 3vh;
+            padding-left: 1vh;
+            padding-right: 1vh;
+            padding-top: 1vh;
+            padding-bottom: 1vh;
+            margin-top: 2vh;
+            margin-left: 4vh;
+            scrollbar-width: 2px;
+            scroll-behavior: smooth;
+            scrollbar-color: #191922 #252533;
+            overflow-y: auto;
+            resize: vertical;
+        }
+    </style>
+</head>
+    <body>
+        <div class="header">
+            <div class="header-text">Синтаксический анализатор для проблемно-ориентированного языка</div>
+        </div>
+        <div class="main-cont">
+            <div class="user-panel">
+                <div class="universal-wrap" id="panel">
+                    <div contenteditable="true" class="txtarea" spellcheck="false" name="prompt" id="prompt" data-text="Введите команду..."></div ><br>
+                    <textarea spellcheck="false" name="output" id="output" placeholder="Место для вывода" disabled></textarea>
+                    <input type="button" value="Start" class="btn"><br>
+                </div>
+            </div>
+            <div class="rules-table" id="rules-table">
+                <div class="universal-wrap">
+                    <div class="rules-header">БНФ языка для написания команд</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;язык = 'старт' мн...мн слаг опер...опер 'конец'</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;мн = 'первое' пер','..пер ! 'второе' цел...цел</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;слаг = цел','...цел 'конец слагаемого'</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;опер = метка ':' пер '=' правая_часть</div>
+                    <div class="rules-row"></div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;правая_часть = &lt;/ '-' /> блок1['+' ! '-']...блок1</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок1 = блок2['*' ! '/']...блок2</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок2 = блок3['and' ! 'or']...блок3</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок3 = &lt;/ 'not' /> block4...блок4</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок4 = &lt;/ функция...функция /> блок5</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок5 = цел ! пер</div>
+                    <div class="rules-row"></div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;функция = 'sin' ! 'cos' ! 'abs'</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;пер = буква  &lt;/ символ...символ /></div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;символ = цифра ! буква</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;метка = цел</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;цел = цифра...цифра </div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;цифра = '0' ! '1' ! ... ! '7'</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;буква = 'А' ! 'Б' ! .. ! 'Я'</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
