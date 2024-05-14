@@ -74,172 +74,106 @@
         });
     </script>
     <style>
-        @font-face {
-            font-family: "Montserrat";
-            src:
-                url("./fonts/Montserrat/Montserrat-VariableFont_wght.ttf"),
-        }
-
-        body{
-            height: 100%;
-            width: 100%;
-            padding: 0;
-            font-family: "Montserrat";
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
             margin: 0;
-            background-color: #252533;
-            color: rgb(131, 131, 150);
-        }
-        .header {
-            position: relative;
-            height: 5vh;
-            text-align: center;
-            background-color: #1e1e29;
-            box-shadow:
-                inset 0 -3em 3em rgba(0, 0, 0, 0.1),
-                0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
-        }
-        .header-text {
-            position: relative;
-            font-size: 32px;
-            color: rgb(166, 166, 190);
-        }
-        .main-cont {
-            position: relative;
+            padding: 0;
             display: flex;
-            height: 95vh;
-            width: 100%;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        .user-panel {
-            position: relative;
-            display: block;
-            height: 90vh;
-            width: 50vw;
-        }
-        .rules-table {
-            position: relative;
-            display: block;
-            height: 90vh;
-            width: 50vw;
-        }
-        .universal-wrap {
-            position: relative;
-            display: block;
-            height: 70vh;
-            width: 40vw;
-            margin: auto;
-            margin-top: 5vh;
 
-            border: 1px solid rgb(131, 131, 150);
-            border-radius: 10px;
-            box-shadow:
-                inset 0 -3em 3em rgba(0, 0, 0, 0.1),
-                0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
         }
-        .rules-row {
-            position: relative;
-            margin-top: 0.1vh;
-            width: 40vw;
-            height: 3vh;
-            text-align: left;
-            font-size: 24px;
 
-            
+        .left-panel,
+        .right-panel {
+            flex: 1;
+            padding: 20px;
         }
-        .rules-header {
-            position: relative;
-            margin-top: 0.1vh;
-            width: 40vw;
-            height: 3vh;
+
+        .header {
             text-align: center;
-            font-size: 32px;
-            padding-bottom: 3vh;
-            padding-top: 1vh;
-            color: rgb(166, 166, 190);
+            margin-bottom: 20px;
         }
-        textarea {
-            background-color: #252533;
-            color: rgb(145, 145, 167);
-            font-size: 18px;
-            border-radius: 5px;
-            border-color: rgb(131, 131, 150);
-            border-width: 0.5px;
-            max-width: 35vw;
-            min-width: 35vw;
-            max-height: 20vh;
-            min-height: 3vh;
-            height: 3vh;
-            padding-left: 1vh;
-            padding-right: 1vh;
-            padding-top: 1vh;
-            padding-bottom: 1vh;
-            margin-top: 2vh;
-            margin-left: 4vh;
-            scrollbar-width: 2px;
-            scroll-behavior: smooth;
-            scrollbar-color: #191922 #252533;
-        }
-        .btn {
-            position: relative;
-            margin-top: 3vh;
-            padding-top: 1vh;
-            padding-left: 1vh;
-            padding-bottom: 1vh;
-            padding-right: 1vh;
-            width: 10vw;
+
+        .user-panel,
+        .rules-table {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             font-size: 24px;
-            background-color: #1e1e29;
-            color: rgb(166, 166, 190);
-            border-width: 0;
+        }
+
+        .user-panel input[type="button"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
             border-radius: 5px;
-            transition: 0.2s;
             cursor: pointer;
-            margin-left: 15vw;
+            transition: background-color 0.3s;
         }
-        .btn:hover {
-            background-color: #1c1c25;
+
+        .user-panel input[type="button"]:hover {
+            background-color: #0056b3;
         }
-        [contentEditable=true]:empty:not(:focus):before {
-            content: attr(data-text)
+
+        .universal-wrap {
+            text-align: center;
+        }
+
+        .universal-wrap textarea, .universal-wrap .txtarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            resize: vertical;
+            font-size: 25px;
         }
         .txtarea {
-            background-color: #252533;
-            color: rgb(145, 145, 167);
-            font-size: 18px;
-            border-radius: 5px;
-            border-width: 0.5px;
-            border-color: rgb(131, 131, 150);
-            border-style: solid;
-            max-width: 35vw;
-            min-width: 35vw;
-            max-height: 20vh;
-            min-height: 3vh;
-            height: 3vh;
-            padding-left: 1vh;
-            padding-right: 1vh;
-            padding-top: 1vh;
-            padding-bottom: 1vh;
-            margin-top: 2vh;
-            margin-left: 4vh;
-            scrollbar-width: 2px;
-            scroll-behavior: smooth;
-            scrollbar-color: #191922 #252533;
+            width: 100px;
             overflow-y: auto;
             resize: vertical;
         }
+        .rules-row {
+            text-align: left;
+            width: 550px;
+        }
+        .rules-header {
+            font-weight: bold;
+        }
+        #prompt {
+            text-align: left;
+        }
     </style>
 </head>
-    <body>
-        <div class="header">
-            <div class="header-text">Синтаксический анализатор для проблемно-ориентированного языка</div>
-        </div>
-        <div class="main-cont">
+<body>
+    <div class="container">
+        <div class="left-panel">
             <div class="user-panel">
                 <div class="universal-wrap" id="panel">
                     <div contenteditable="true" class="txtarea" spellcheck="false" name="prompt" id="prompt" data-text="Введите команду..."></div ><br>
                     <textarea spellcheck="false" name="output" id="output" placeholder="Место для вывода" disabled></textarea>
-                    <input type="button" value="Start" class="btn"><br>
+                    <input type="button" value="Start"><br>
                 </div>
             </div>
+        </div>
+        <div class="right-panel">
             <div class="rules-table" id="rules-table">
                 <div class="universal-wrap">
                     <div class="rules-header">БНФ языка для написания команд</div>
@@ -265,5 +199,6 @@
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+</body>
 </html>

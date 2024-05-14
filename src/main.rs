@@ -1,6 +1,6 @@
-use actix_web::{get, http::StatusCode, post, web, App, HttpMessage, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
 use actix_files as fs;
-use syntax_analizer::{Compiler, Errs};
+use syntax_analizer::Compiler;
 use std::{include_str, io::Result};
 use serde::{Serialize, Deserialize};
 
@@ -21,7 +21,7 @@ struct RequestType {
 async fn index() -> impl Responder {
     HttpResponse::build(StatusCode::OK)
         .content_type("text/html; charset=utf-8")
-        .body(include_str!("./static/index.html"))
+        .body(include_str!("./static/index4.html"))
 }
 
 #[post("/synt")]

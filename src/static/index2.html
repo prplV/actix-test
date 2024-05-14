@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Синтаксический анализатор</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $('document').ready( function () {
+            //alert("hi");
+            let strok = "";
+
+            $('#prompt').text("");
+            $('#output').val("");
+
+            $( "#prompt" ).on( "input", function() {
+                strok = $('#prompt').text();
+            } );
+
+            $('input[type=button]').click(function () {
+                // $('#output').val("hui!\nhui!");
+                if ($('#prompt').text() == "") {
+                    errorEmpty();
+                }
+                else {
+                    strok = $('#prompt').text();
+                    $.ajax({
+                        method: 'post',
+                        url: './synt',
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({text: String(strok)}),
+                        success: function(data) {
+                            console.log(data);
+                            if (data.type == "Error") {
+                                strok = data.initial_cmd;
+                                //$('#prompt').text("");
+                                errorEmpty();
+
+                                // loop across initial cmd
+                                let temp = strok.split(" ");
+                                $('#prompt').text("");
+                                for (var i = 0; i < temp.length; i++) {
+                                    $('#prompt').append("<span id='token-" + i + "'>" + temp[i] + "</span> ");
+                                }
+                                
+                                let id = "#token-" + String(data.index);
+                                $(id).css({'color' : 'red'});
+                                
+                                $('#output').val(data.text);
+                            } else {
+                                //
+                                strok = data.initial_cmd;
+                                $('#prompt').text(data.initial_cmd);
+                                $('#output').val(data.text);
+                            }
+                        },
+                        error: function(err) {
+                            errorEmpty();
+                            console.log(err);
+                        }
+                    });
+                }
+            });
+            $('#prompt').on('click', function () {
+                //$('#prompt').text(strok);
+                $('span').css({'color' : 'rgb(131, 131, 150)'});
+                $('#panel').css({'border-color' : 'rgb(131, 131, 150)'});
+            });
+            function errorEmpty() {
+                $('#panel').css({'border-color' : 'rgb(255, 17, 17)'});
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .main-cont {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .user-panel {
+            width: 45%;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .rules-table {
+            width: 45%;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .universal-wrap {
+            margin: 0 auto;
+        }
+
+        .rules-header {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .rules-row {
+            font-size: 16px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            color: #777;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+            resize: vertical;
+        }
+
+        .btn {
+            display: block;
+            width: 80px;
+            margin: 10px auto;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Синтаксический анализатор для проблемно-ориентированного языка</h1>
+    </div>
+    <div class="main-cont">
+        <div class="rules-table" id="rules-table">
+            <div class="universal-wrap">
+                <div class="rules-header">БНФ языка для написания команд</div>
+                <div class="rules-row">язык = 'старт' мн...мн слаг опер...опер 'конец'</div>
+                <!-- Other rules rows go here -->
+            </div>
+        </div>
+        <div class="user-panel">
+            <div class="universal-wrap" id="panel">
+                <div contenteditable="true" class="txtarea" spellcheck="false" name="prompt" id="prompt" data-text="Введите команду..."></div ><br>
+                <textarea spellcheck="false" name="output" id="output" placeholder="Место для вывода" disabled></textarea>
+                <input type="button" value="Start" class="btn"><br>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Синтаксический анализатор</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $('document').ready( function () {
+            //alert("hi");
+            let strok = "";
+
+            $('#prompt').text("");
+            $('#output').val("");
+
+            $( "#prompt" ).on( "input", function() {
+                strok = $('#prompt').text();
+            } );
+
+            $('input[type=button]').click(function () {
+                // $('#output').val("hui!\nhui!");
+                if ($('#prompt').text() == "") {
+                    errorEmpty();
+                    alert("Поле ввода не должно быть пустым");
+                }
+                else {
+                    strok = $('#prompt').text();
+                    $.ajax({
+                        method: 'post',
+                        url: './synt',
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({text: String(strok)}),
+                        success: function(data) {
+                            console.log(data);
+                            if (data.type == "Error") {
+                                strok = data.initial_cmd;
+                                //$('#prompt').text("");
+                                errorEmpty();
+
+                                // loop across initial cmd
+                                let temp = strok.split(" ");
+                                $('#prompt').text("");
+                                for (var i = 0; i < temp.length; i++) {
+                                    $('#prompt').append("<span id='token-" + i + "'>" + temp[i] + "</span> ");
+                                }
+                                
+                                let id = "#token-" + String(data.index);
+                                $(id).css({'color' : 'red'});
+                                
+                                $('#output').val(data.text);
+                            } else {
+                                //
+                                strok = data.initial_cmd;
+                                $('#prompt').text(data.initial_cmd);
+                                $('#output').val(data.text);
+                            }
+                        },
+                        error: function(err) {
+                            errorEmpty();
+                            console.log(err);
+                        }
+                    });
+                }
+            });
+            $('#prompt').on('click', function () {
+                $('span').css({'color' : 'black'});
+                $('#prompt').css({'border-color' : 'rgb(255, 255, 255)'});
+            });
+            function errorEmpty() {
+                $('#prompt').css({'border-color' : 'red'});
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .user-panel,
+        .rules-table {
+            background-color: #eee;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-left: 10px;
+            width: 31vw;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: black;
+            font-weight: bold;
+            font-size: 32px;
+        }
+
+        .universal-wrap {
+            text-align: center;
+        }
+
+        .universal-wrap textarea,
+        .universal-wrap .txtarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            background-color: rgb(255, 255, 255);
+            color: black;
+            resize: vertical;
+            font-size: 24px;
+        }
+
+        .user-panel input[type="button"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            width: 150px;
+        }
+
+        .user-panel input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+        .rules-row {
+            text-align: left;
+            font-size: 24px;
+        }
+        #prompt {
+            color: black;
+            overflow-y: auto;
+            resize: vertical;
+            max-height: 300px;
+            max-width: 30vw;
+            min-height: 20vh;
+            text-align: left;
+        }
+        #output {
+            color: black;
+            overflow-y: auto;
+            resize: vertical;
+            max-width: 30vw;
+            max-height: 300px;
+            min-height: 10vh;
+        }
+        #panel {
+            width: 30vw;
+        }
+        span {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="rules-table" id="rules-table">
+            <div class="universal-wrap">
+                <div class="header">Описание языка</div>
+                <div class="rules-row">&nbsp;&nbsp;&nbsp;язык = 'старт' мн...мн слаг опер...опер 'конец'</div>
+                <div class="rules-row">&nbsp;&nbsp;&nbsp;мн = 'первое' пер','..пер ! 'второе' цел...цел</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;слаг = цел','...цел 'конец слагаемого'</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;опер = метка ':' пер '=' правая_часть</div>
+                    <div class="rules-row"></div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;правая_часть = &lt;/ '-' /> блок1['+' ! '-']...блок1</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок1 = блок2['*' ! '/']...блок2</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок2 = блок3['and' ! 'or']...блок3</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок3 = &lt;/ 'not' /> block4...блок4</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок4 = &lt;/ функция...функция /> блок5</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;блок5 = цел ! пер</div>
+                    <div class="rules-row"></div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;функция = 'sin' ! 'cos' ! 'abs'</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;пер = буква  &lt;/ символ...символ /></div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;символ = цифра ! буква</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;метка = цел</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;цел = цифра...цифра </div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;цифра = '0' ! '1' ! ... ! '7'</div>
+                    <div class="rules-row">&nbsp;&nbsp;&nbsp;буква = 'А' ! 'Б' ! .. ! 'Я'</div>
+            </div>
+        </div>
+        <div class="user-panel">
+            <div class="universal-wrap" id="panel">
+                <div class="header">Терминал</div>
+                <div contenteditable="true" class="txtarea" spellcheck="false" name="prompt" id="prompt" data-text="Введите команду..."></div ><br>
+                <textarea spellcheck="false" name="output" id="output" placeholder="Место для вывода" disabled></textarea>
+                <input type="button" value="Start"><br>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
